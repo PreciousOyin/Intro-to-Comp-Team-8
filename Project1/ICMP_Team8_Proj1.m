@@ -103,38 +103,76 @@ hold off
 
 
 
-%% Question 3 (IDK rn)
+%% Question 3
 
+%data of ABP for the first 12 hours
 startIdx = 1;
 end_idx = find(ABP_File.Var1 == 43200, 1, 'first');
+abp_subset = ABP_File(startIdx:end_idx, :);
 
-T_subset = ABP_File(startIdx:end_idx, :);
+% Var1 is time in seconds and Var2 is ABP
+abp = abp_subset.Var2;
 
-abp_test =T_subset.Var2;
+% onsets times and abp features for 12 hr time frame
+onset_12hr = wabp(abp);
+abpfeature_12hr = abpfeature(abp, onset_12hr);
+t_on = onset_12hr;
+feat  = abpfeature_12hr;
 
-onset_test = wabp(abp_test);
+% using jSQI function to get SQI of each beat (BeatQ_12hr) and other 
+% features for TCO measurements (PP, MAP, HR)
+[BeatQ_12hr, frac_good_bts]= jSQI(abpfeature_12hr, onset_12hr, abp);
+beatq = BeatQ_12hr;
 
-abpfeature_test = abpfeature(abp_test, onset_test);
-
-
-t_on = onset_test;
-feat  = abpfeature_test;
-[BeatQ_test, frac_good_bts]= jSQI(abpfeature_test, onset_test, abp_test);
-
-beatq = BeatQ_test;
-
+% Liljestrand PP/(Psys+Pdias) estimator
 estID = 5;
 
 filt_order = 1;
 
+% obtained estimated CO using Liljestrand estimator
 [co, to, told, fea] = estimateCO_v3(t_on,feat,beatq,estID,filt_order);
 
-% numeric_tbl.CO(13)
 
-C3 = numeric_tbl.CO(13)./co;
+% calculated calibration C3 using first valid reference CO from 
+% patient 20's numeric file (which was at hr 12)
+C2 = numeric_tbl.CO(13)./co(1);
 
-% CO_calibrated = C3.*co;
+%Used C2 to calibrate estimated CO
+CO_calibrated = C2.*co;
 
+% converted time from minutes to hours
+time_hr = to./60;
+
+
+% size(CO_calibrated)
+% size(time_hr)
+% size(fea)
+
+
+% Reproduction of Figure 4
+figure
+% estimated CO plot
+subplot(4,1,1)
+plot(time_hr, CO_calibrated)
+ylabel('CO')
+ylim([2,10])
+
+% estimated Pulse Pressure (PP) plot
+subplot(4,1,2)
+plot(time_hr, fea(:,5))
+ylabel('PP')
+ylim([20,120])
+
+% mean arterial pressure (MAP) plot
+subplot(4,1,3)
+plot(time_hr, fea(:,6))
+ylabel('MAP')
+
+% heart rate (HR) plot
+subplot(4,1,4)
+plot(time_hr, 60*125./fea(:,6))
+xlabel('Time [hours]');
+ylabel('HR');
 
 
 myFlag=1;   % Program finished
