@@ -1,3 +1,8 @@
+% Team Name: Team 8
+% Team Members: Precious Oyinloye, Anna Vargas, Armaan Bilimoria, Lei Yan
+% CPA
+% File Number 1 of 1
+
 function myFlag = ICMP_Team8_Proj1()
 clear all
 close all
@@ -13,8 +18,8 @@ numeric_tbl = readtable('s00020-2567-03-30-17-47n.txt');
 % give about 20 pulses
 
 % Var1 is time in seconds and Var2 is ABP
-startIdx = find(ABP_File.Var1 == 36000, 1, 'first');
-endIdx = startIdx + 2000;
+startIdx = find(ABP_File.Var1 >= 36000, 1, 'first');
+endIdx = startIdx + 1979;
 
 ABP_subset = ABP_File(startIdx:endIdx, :);
 abp_hr10 =ABP_subset.Var2;
@@ -29,7 +34,7 @@ abpfeature_hr10 = abpfeature(abp_hr10, onset_times);
 
 
 % Number of samples pts for the 20 pulses
-sample_pts = linspace(0, 2001, 2001);
+sample_pts = linspace(0, 1980, 1980);
 
 subplot(2,1,1)
 plot(sample_pts, abp_hr10)
@@ -48,12 +53,12 @@ EOF_lns_times = abpfeature_hr10(:,11);
 end_lns= abp_hr10(EOF_lns_times);
 plot(EOF_lns_times, end_lns, 'O' , 'MarkerSize',10)
 
-xlabel('Sample Number');
+xlabel('Sample Number (125 samples = 1 s)');
 ylabel('Arterial Blood Pressure');
-title('Hour 10 Pulses')
+title('20 Pulses Starting at Hour 10')
 
-axis([0 2100 40 180]);
-
+axis([0 1940 40 180]);
+legend("ABP Waveform", "Onset", "End of Systole (0.3 * sqrt(Beat Period))", "End of Systole (lowest nonnegative slope)")
 hold off
 
 
@@ -92,11 +97,12 @@ EOS_lns_times_hr11= abpfeature_hr11(:,11);
 end_lns_hr11 = abp_hr11(EOS_lns_times_hr11);
 plot(EOS_lns_times_hr11, end_lns_hr11, 'O' , 'MarkerSize',10)
 
-xlabel('Sample Number');
+xlabel('Sample Number (125 samples = 1 s)');
 ylabel('Arterial Blood Pressure');
-title('Hour 11 Pulses')
+title('20 Pulses Starting at Hour 11')
+legend("ABP Waveform", "Onset", "End of Systole (0.3 * sqrt(Beat Period))", "End of Systole (lowest nonnegative slope)")
 
-axis([0 2100 40 180])
+axis([0 1920 40 180])
 hold off
 
 
@@ -133,8 +139,8 @@ filt_order = 1;
 [co, to, told, fea] = estimateCO_v3(t_on,feat,beatq,estID,filt_order);
 
 
-% calculated calibration C3 using first valid reference CO from 
-% patient 20's numeric file (which was at hr 12)
+% calculated calibration C2 using first valid reference CO from 
+% patient 20's numeric file (which was at 0.2 hrs)
 C2 = numeric_tbl.CO(13)./co(1);
 
 %Used C2 to calibrate estimated CO
@@ -143,10 +149,22 @@ CO_calibrated = C2.*co;
 % converted time from minutes to hours
 time_hr = to./60;
 
+CO = numeric_tbl.CO;
 
-% size(CO_calibrated)
-% size(time_hr)
-% size(fea)
+% find  CO ouputs between hours 0 and 12 hours in numeric file
+idx = find(CO ~= 0);
+CO_time = numeric_tbl.ElapsedTime(idx) / 3600;
+CO_val = CO(idx);
+
+keep = CO_time <= 12;
+CO_time = CO_time(keep);
+CO_val = CO_val(keep);
+
+
+PP = fea(:,5); % Pulse Pressure
+MAP = fea(:,6); % Mean Arterial Pressure
+HR = 60*125./fea(:,7); % Heart Rate
+
 
 
 % Reproduction of Figure 4
@@ -154,25 +172,31 @@ figure
 % estimated CO plot
 subplot(4,1,1)
 plot(time_hr, CO_calibrated)
+hold on
+stem(CO_time, CO_val, 'MarkerFaceColor',[1, 0.5, 0])
 ylabel('CO')
+xlim([0 12])
 ylim([2,10])
+legend('Calibrated CO', "True CO")
+title("Estimate of Continuous CO, PP, MAP, HR Using Liljestrand Estimator")
+hold off 
 
-% estimated Pulse Pressure (PP) plot
+% Pulse Pressure (PP) plot
 subplot(4,1,2)
-plot(time_hr, fea(:,5))
-ylabel('PP')
+plot(time_hr, PP)
+ylabel('PP (mmHg)')
 ylim([20,120])
 
 % mean arterial pressure (MAP) plot
 subplot(4,1,3)
-plot(time_hr, fea(:,6))
-ylabel('MAP')
+plot(time_hr, MAP)
+ylabel('MAP (mmHg)')
 
 % heart rate (HR) plot
 subplot(4,1,4)
-plot(time_hr, 60*125./fea(:,6))
+plot(time_hr, HR)
 xlabel('Time [hours]');
-ylabel('HR');
+ylabel('HR (bpm)');
 
 
 myFlag=1;   % Program finished
