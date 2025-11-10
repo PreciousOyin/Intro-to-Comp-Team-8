@@ -148,9 +148,7 @@ plot(EOF_lns_times_427, end_lns_427, 'O', 'MarkerSize', 10)
 xlabel('Sample Number (125 samples = 1 s)')
 ylabel('Arterial Blood Pressure (mmHg)')
 title('Patient 427: 20 Pulses Starting at Hour 9')
-legend("ABP Waveform", "Onset", ...
-    "End of Systole (0.3 * sqrt(Beat Period))", ...
-    "End of Systole (lowest nonnegative slope)")
+legend("ABP Waveform", "Onset", "End of Systole (0.3 * sqrt(Beat Period))", "End of Systole (lowest nonnegative slope)")
 axis([0 1980 40 180])
 hold off
 
@@ -191,9 +189,7 @@ plot(EOF_lns_times_20, end_lns_20, 'O', 'MarkerSize', 10)
 xlabel('Sample Number (125 samples = 1 s)')
 ylabel('Arterial Blood Pressure (mmHg)')
 title('Patient 20: 20 Pulses Starting at Hour 7')
-legend("ABP Waveform", "Onset", ...
-    "End of Systole (0.3 * sqrt(Beat Period))", ...
-    "End of Systole (lowest nonnegative slope)")
+legend("ABP Waveform", "Onset", "End of Systole (0.3 * sqrt(Beat Period))", "End of Systole (lowest nonnegative slope)")
 axis([0 1980 40 180])
 hold off
 
