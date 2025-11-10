@@ -105,6 +105,97 @@ legend("ABP Waveform", "Onset", "End of Systole (0.3 * sqrt(Beat Period))", "End
 axis([0 1920 40 180])
 hold off
 
+%% Question 2
+%% For patient 427
+% Load in files
+ABP_File_427 = readtable('s00427-2977-04-30-13-51_ABP.txt');
+numeric_tbl_427 = readtable('s00427-2977-04-30-13-51n.txt');
+
+% Grabbed indexes of points starting from hr 9 that would roughly give about 20 pulses (125 samples = 1 s)
+startIdx_427 = find(ABP_File_427.Var1 >= 32400, 1, 'first'); % 9 hours = 9*3600 s
+endIdx_427 = startIdx_26 + 1980;
+
+ABP_subset_427 = ABP_File_427(startIdx_427:endIdx_427, :);
+abp_427 = ABP_subset_427.Var2;
+
+% Obtained onset times using wabp function
+onset_times_427 = wabp(abp_427);
+
+% Obtained ABP waveform features using abpfeature function
+abpfeature_427 = abpfeature(abp_427, onset_times_427);
+
+% Number of sample pts for ~20 pulses
+sample_pts_427 = linspace(0, 1980, 1980);
+
+figure
+subplot(2,1,1)
+plot(sample_pts_427, abp_427)
+hold on
+% Onsets
+onsets_427 = abp_427(onset_times_427);
+plot(onset_times_427, onsets_427, '*', 'MarkerSize', 10)
+
+% End of systole estimated with beat periods
+EOF_bts_times_427 = abpfeature_427(:,9);
+EOF_bts_427 = abp_427(EOF_bts_times_427);
+plot(EOF_bts_times_427, EOF_bts_427, 'X', 'MarkerSize', 10)
+
+% End of systole estimated with lowest nonnegative slope
+EOF_lns_times_427 = abpfeature_427(:,11);
+end_lns_427 = abp_427(EOF_lns_times_427);
+plot(EOF_lns_times_427, end_lns_427, 'O', 'MarkerSize', 10)
+
+xlabel('Sample Number (125 samples = 1 s)')
+ylabel('Arterial Blood Pressure (mmHg)')
+title('Patient 427: 20 Pulses Starting at Hour 9')
+legend("ABP Waveform", "Onset", ...
+    "End of Systole (0.3 * sqrt(Beat Period))", ...
+    "End of Systole (lowest nonnegative slope)")
+axis([0 1980 40 180])
+hold off
+
+
+
+%% For patient 20
+% Load in Files for patient 20
+ABP_File_20 = readtable('s00020-2567-03-30-17-47_ABP.txt');
+numeric_tbl_20 = readtable('s00020-2567-03-30-17-47n.txt');
+
+% Choose a different hour window to show waveform variation
+startIdx_20 = find(ABP_File_20.Var1 >= 25200, 1, 'first');
+endIdx_20 = startIdx_20 + 1980;
+
+ABP_subset_20 = ABP_File_20(startIdx_20:endIdx_20, :);
+abp_20 = ABP_subset_20.Var2;
+
+% Onset times and features
+onset_times_20 = wabp(abp_20);
+abpfeature_20 = abpfeature(abp_20, onset_times_20);
+
+sample_pts_20 = linspace(0, 1980, 1980);
+
+subplot(2,1,2)
+plot(sample_pts_20, abp_20)
+hold on
+onsets_20 = abp_20(onset_times_20);
+plot(onset_times_20, onsets_20, '*', 'MarkerSize', 10)
+
+EOF_bts_times_20 = abpfeature_20(:,9);
+EOF_bts_20 = abp_20(EOF_bts_times_20);
+plot(EOF_bts_times_20, EOF_bts_20, 'X', 'MarkerSize', 10)
+
+EOF_lns_times_20 = abpfeature_20(:,11);
+end_lns_20 = abp_20(EOF_lns_times_20);
+plot(EOF_lns_times_20, end_lns_20, 'O', 'MarkerSize', 10)
+
+xlabel('Sample Number (125 samples = 1 s)')
+ylabel('Arterial Blood Pressure (mmHg)')
+title('Patient 20: 20 Pulses Starting at Hour 7')
+legend("ABP Waveform", "Onset", ...
+    "End of Systole (0.3 * sqrt(Beat Period))", ...
+    "End of Systole (lowest nonnegative slope)")
+axis([0 1980 40 180])
+hold off
 
 
 
