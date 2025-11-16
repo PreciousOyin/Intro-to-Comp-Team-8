@@ -17,6 +17,9 @@ function r = abpfeature(abp,OnsetTimes)
 %              10:  Area under systole   0.3*sqrt(RR)  method
 %              11:  End of systole time  1st min-slope method
 %              12:  Area under systole   1st min-slope method
+%              13:  Beat Period       [seconds]
+%              14:  Change in ABP     [mmHg]
+%              15:  Time constant (tau)
 % 
 %   Usage:
 %   - OnsetTimes must be obtained using wabp.m
@@ -100,6 +103,30 @@ Slope(Slope>0)     = 0; % Get rid of positive slopes
 [MinSlope index]   = min(abs(Slope),[],2);
 EndOfSys2          = SlopeDomain(sub2ind(size(SlopeDomain),(1:BeatQty)',index));
 SysArea2           = localfun_area(abp,OT,EndOfSys2,P_dias);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beat Period in seconds
+Tn = BeatPeriod*125;
+% size(Tn)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Change in ABP
+del_P = diff(abp(OnsetTimes));
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tau 
+slide_window = 7;
+half_wind = (slide_window - 1)/2;
+betas = zeros(BeatQty, 1);
+
+for i=1+half_wind : BeatQty-half_wind
+    wind_idx = (i - half_wind) : (i + half_wind);
+    x = MAP(wind_idx);
+    y = (PP(wind_idx) - del_P(wind_idx))./Tn(wind_idx);
+    beta = (x.' * y) / ( x.' * x);
+    betas(i) = beta;
+
+end
+tau = 1./betas;
+
 
 % OUTPUT:
 r = [SysTime'
@@ -113,7 +140,10 @@ r = [SysTime'
      EndOfSys1'
      SysArea1'
      EndOfSys2' 
-     SysArea2']';
+     SysArea2'
+     Tn'
+     del_P'
+     tau']';
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
