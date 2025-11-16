@@ -76,6 +76,9 @@ fea = [];
     SArr    = F1(:,10);
     tSAcosm = F1(:,11);
     SAcosm  = F1(:,12);
+    Tn      = F1(:,13);
+    del_P   = F1(:,14);
+    tau     = F1(:,15);
 
     % select systolic area estimate
     SA      = SArr;
@@ -114,6 +117,7 @@ fea = [];
  %       case 11,   x = est11_mf(abp,onset1,MAP,HR,age,gender);
         case 12,   x = est12_coalees(PP,HR,onset1,tSA,Psys,Pdias);
         case 13,   x = est13_trivial(PP,HR,MAP);
+        case 14,   x = est14_Parlikar(del_P, Tn, MAP, tau);
         otherwise, x = nan;
     end
     
