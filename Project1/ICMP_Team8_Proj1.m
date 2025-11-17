@@ -9,8 +9,18 @@ close all
 myFlag = 0;
 
 % Load in Files
+
+
 ABP_File = readtable('s00020-2567-03-30-17-47_ABP.txt');
 numeric_tbl = readtable('s00020-2567-03-30-17-47n.txt');
+
+% ABP_File = readtable('s01144-3060-09-04-16-53_ABP.txt');
+% numeric_tbl = readtable('s01144-3060-09-04-16-53n.txt');
+
+% ABP_File = readtable('s00703-2568-07-07-15-45_ABP.txt');
+% numeric_tbl = readtable('s00703-2568-07-07-15-45n.txt');
+
+
 
 %% Question 1
 
@@ -226,10 +236,10 @@ filt_order = 1;
 % obtained estimated CO using Liljestrand estimator
 [co_5, to, told, fea] = estimateCO_v3(t_on,feat,beatq,estID,filt_order);
 
-
 % calculated calibration C2 using first valid reference CO from 
 % patient 20's numeric file (which was at 0.2 hrs)
-C2 = numeric_tbl.CO(13)./co_5(1);
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_5(1);
 
 %Used C2 to calibrate estimated CO
 CO_calibrated_5 = C2.*co_5;
@@ -368,8 +378,8 @@ filt_order = 1;
 
 % calculated calibration C2 using first valid reference CO from 
 % patient 20's numeric file (which was at 0.2 hrs)
-C2 = numeric_tbl.CO(13)./co_2(1);
-
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_2(1);
 %Used C2 to calibrate estimated CO
 CO_calibrated_2 = C2.*co_2;
 
@@ -440,7 +450,8 @@ filt_order = 1;
 
 % calculated calibration C2 using first valid reference CO from 
 % patient 20's numeric file (which was at 0.2 hrs)
-C2 = numeric_tbl.CO(13)./co_7(1);
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_7(1);
 
 %Used C2 to calibrate estimated CO
 CO_calibrated_7 = C2.*co_7;
@@ -471,7 +482,7 @@ bias_7 = mean(diffs_7);
 % Standard deviation of differences
 sd_diff_7= std(diffs_7);
 % 95% Limits of Agreement
-LoA_lower_7 = bias_7 - 1.96 * sd_diff_7;
+LoA_lower_7 = bias_7 - 1.96 * sd_diff_7
 LoA_upper_7 = bias_7 + 1.96 * sd_diff_7;
 
 % Directional Agreement
@@ -544,10 +555,10 @@ estID = 14;
 filt_order = 1;
 
 % obtained estimated CO using parlikar estimator
-[co_14, to_14, told, fea] = estimateCO_v3(t_on,feat,beatq,estID,filt_order);
+[co_14, to_14, told, fea_14] = estimateCO_v3(t_on,feat,beatq,estID,filt_order);
 
-C2 = numeric_tbl.CO(13)./co_14(1);
-%Used C2 to calibrate estimated CO
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_14(1);%Used C2 to calibrate estimated CO
 CO_calibrated_14 = C2.*co_14;
 
 % converted time from minutes to hours
@@ -591,6 +602,86 @@ dir_pred_14   = sign(delta_pred_14);
 nonzero_idx_14 = dir_act_14 ~= 0;
 matches_14 = dir_act_14(nonzero_idx_14) == dir_pred_14(nonzero_idx_14);
 dir_agr_14 = mean(matches_14);
+
+
+
+
+
+
+feat_s5 = abpfeature2(abp, onset_12hr, 5);
+
+
+
+% obtained estimated CO using parlikar estimator
+[co_14_s5, to_14_s5, told, fea_s5] = estimateCO_v3(t_on,feat_s5,beatq,estID,filt_order);
+
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_14_s5(1);
+%Used C2 to calibrate estimated CO
+CO_calibrated_14_s5 = C2.*co_14_s5;
+
+% converted time from minutes to hours
+time_hr_14_s5 = to_14_s5./60;
+
+
+feat_s7 = abpfeature2(abp, onset_12hr, 7);
+% obtained estimated CO using parlikar estimator
+[co_14_s7, to_14_s7, told, fea_s7] = estimateCO_v3(t_on,feat_s7,beatq,estID,filt_order);
+
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_14_s7(1);
+%Used C2 to calibrate estimated CO
+CO_calibrated_14_s7 = C2.*co_14_s7;
+
+% converted time from minutes to hours
+time_hr_14_s7 = to_14_s7./60;
+
+
+
+feat_s11 = abpfeature2(abp, onset_12hr, 11);
+% obtained estimated CO using parlikar estimator
+[co_14_s11, to_14_s11, told, fea11] = estimateCO_v3(t_on,feat_s11,beatq,estID,filt_order);
+
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_14_s11(1);
+%Used C2 to calibrate estimated CO
+CO_calibrated_14_s11 = C2.*co_14_s11;
+
+% converted time from minutes to hours
+time_hr_14_s11 = to_14_s11./60;
+
+
+
+
+
+
+figure
+set(gcf, 'color', [0.9412 0.9412 0.9412])
+set(gca, 'color', [0.9412 0.9412 0.9412])
+% estimated CO plot Parlikar sliding window C2 calibration
+plot(time_hr_14_s5, CO_calibrated_14_s5, 'Color',[0.15,0.15,0.15])
+hold on
+plot(time_hr_14_s7, CO_calibrated_14_s7,'Color', [0.82,0.02,0.55])
+plot(time_hr_14_s11, CO_calibrated_14_s11,'Color', [0.18,0.75,0.94])
+
+xlabel('time [hours]')
+ylabel('CO (L/min)')
+xlim([0 12])
+ylim([2,10])
+legend('Sliding Window = 5', "Sliding Window = 7", "Sliding Window = 11")
+title("Estimate of Continuous CO, Parlikar, Sliding Window Comparisions")
+hold off 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -644,7 +735,6 @@ CO_C1_calibrated_14 = C1_14.*co_14;
 C1_5 = (CO_val.' * co_5_x) ./ (co_5_x.' * co_5_x);
 
 CO_C1_calibrated_5 = C1_5.*co_5;
-
 
 
 % patient 20
@@ -741,6 +831,78 @@ ylim([0,10])
 legend('C2','C1',"True CO")
 title("Estimate of Continuous CO Parlikar, C2 vs C1")
 hold off 
+
+
+
+
+
+%% Question 6
+
+idx_co1 = find(numeric_tbl.CO ~= 0);
+C2 = numeric_tbl.CO(idx_co1(1))./co_14(1);%Used C2 to calibrate estimated CO
+
+Cn = C2;
+COn = C2.*co_14;
+Pn     = fea_14(:,6);     % MAP
+delP   = fea_14(:,14);    % beat-to-beat pressure difference
+Tn     = fea_14(:,13);    % beat period in seconds [minutes]
+tau    = fea_14(:,15);    % time constant
+PP     = fea_14(:,5);     % pulse pressure
+Rn = Pn ./ (COn - Cn .* delP./Tn);
+
+
+
+% CO_calibrated_14 = C2.*co_14;
+% converted time from minutes to hours
+time_hr_14 = to_14./60;
+CO = numeric_tbl.CO;
+% find  CO ouputs between hours 0 and 12 hours in numeric file
+idx = find(CO ~= 0);
+CO_time = numeric_tbl.ElapsedTime(idx) / 3600;
+CO_val = CO(idx);
+keep = CO_time <= 12;
+
+CO_time = CO_time(keep);
+CO_val = CO_val(keep);
+idx_keep = idx(keep)
+
+X_design = [ones(length(idx_keep),1), Pn(idx_keep)];
+flow_factor = delP(idx_keep)./Tn(idx_keep) + Pn(idx_keep)./tau(idx_keep);
+
+
+rmsne_func = @(gamma) sqrt(mean( ((CO_val - (X_design*gamma).*flow_factor)./CO_val).^2 ));
+
+
+options = optimoptions('fminunc','Display','off');
+gamma_opt = fminunc(rmsne_func, [0; 0], options);
+
+
+Cn_affine = gamma_opt(1) + gamma_opt(2) * Pn;
+COn_affine = Cn_affine .* (delP./Tn + Pn./tau);
+Rn_affine = Pn ./ (COn_affine - Cn_affine .* delP./Tn);
+
+
+Rn = Rn * 60 / 1000;
+Rn_affine = Rn_affine * 60 / 1000;
+
+Cn = Cn * 1000;
+Cn_affine = Cn_affine * 1000;
+
+
+figure('Name','TPR Comparison');
+set(gcf, 'color', [0.9412 0.9412 0.9412])
+set(gca, 'color', [0.9412 0.9412 0.9412])
+plot(time_hr_14, Rn,'b','DisplayName','TPR (Constant C2)');
+hold on
+plot(time_hr_14, Rn_affine,'r','DisplayName','TPR (Affine C)');
+xlabel('Time [hours]'); ylabel('TPR [mmHg/(mL/s)]');
+xlim([0 12]);
+ylim([-2 5]);
+title('TPR Comparison Patient #s00703');
+legend;
+hold off
+
+
 
 
 
