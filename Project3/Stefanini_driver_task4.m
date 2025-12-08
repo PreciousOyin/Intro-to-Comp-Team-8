@@ -84,7 +84,7 @@ p_i.VEGFR2prod_t = pts_file.sVEGFR2_Tumor(i)
 % initial conditions 
 y0 = zeros(15,1);
 sstime = 60*24*10;
-options = odeset('MaxStep',5e-2, 'AbsTol', 1e-5,'RelTol', 1e-5,'InitialStep', 1e-2);
+options = odeset('MaxStep',5e-1, 'AbsTol', 1e-5,'RelTol', 1e-5,'InitialStep', 1e-2);
 [T1,Y1] = ode15s(@VEGFAbeqns,[0:1:sstime],y0,options, p_i,n);
 y0ss = Y1(end,:)';
 
@@ -106,8 +106,8 @@ end
 
 % VEGF and Antibody in tumor
 figure;
+subplot(2,2,1)
 hold on;
-
 for i = 1:N
     plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFAb_t)*10^-3,'linewidth',2)
 
@@ -122,7 +122,7 @@ hold off
 
 
 %VEGRF2 in tumor
-figure;
+subplot(2,2,2)
 hold on;
 
 for i = 1:N
@@ -139,7 +139,7 @@ hold off
 
 
 % VEGF-VEGFR2 in Tumor
-figure;
+subplot(2,2,3)
 hold on;
 
 for i = 1:N
@@ -147,8 +147,8 @@ for i = 1:N
 
 end
 
-title( 'Concentration of VEGF2-VEGFR2 in Tumor')
-ylabel('[VEGF2-VEGFR2] (pM)')
+title( 'Concentration of VEGF-VEGFR2 in Tumor')
+ylabel('[VEGF-VEGFR2] (pM)')
 xlabel('time (days)')
 
 xlim([0,25])
@@ -157,7 +157,7 @@ hold off
 
 % VEGF in Tumor
 
-figure;
+subplot(2,2,4)
 hold on;
 
 for i = 1:N
@@ -170,6 +170,5 @@ xlabel('time (days)')
 
 xlim([0,25])
 hold off
-
 
 myFlag=1;   % Program finished
