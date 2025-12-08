@@ -121,34 +121,18 @@ end
 
 
 
-% VEGF and Antibody in tumor
 figure;
+% VEGF in Tumor
+
 subplot(2,2,1)
 hold on;
-for i = 1:N
-    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFAb_t)*10^-3,'linewidth',2)
-
-end
-
-title( 'Concentration of VEGF-antibody Complex in Tumor')
-ylabel('[Ab-V] (nM)')
-xlabel('time (days)')
-
-xlim([0,25])
-hold off
-
-
-%VEGRF2 in tumor
-subplot(2,2,2)
-hold on;
 
 for i = 1:N
-    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFR2_t)*10^-3,'linewidth',2)
-
+    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGF_t),'linewidth',2)
 end
 
-title( 'Concentration of VEGF2 in Tumor')
-ylabel('[[VEGFR2] (nM)')
+title( 'Concentration of VEGF in Tumor')
+ylabel('[VEGF] (pM)')
 xlabel('time (days)')
 
 xlim([0,25])
@@ -156,7 +140,7 @@ hold off
 
 
 % VEGF-VEGFR2 in Tumor
-subplot(2,2,3)
+subplot(2,2,2)
 hold on;
 
 for i = 1:N
@@ -172,20 +156,152 @@ xlim([0,25])
 hold off
 
 
-% VEGF in Tumor
-
-subplot(2,2,4)
+%VEGRF2 in tumor
+subplot(2,2,3)
 hold on;
 
 for i = 1:N
-    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGF_t),'linewidth',2)
+    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFR2_t),'linewidth',2)
+
 end
 
-title( 'Concentration of VEGF in Tumor')
+title( 'Concentration of VEGF2 in Tumor')
+ylabel('[[VEGFR2] (pM)')
+xlabel('time (days)')
+
+xlim([0,25])
+hold off
+
+
+
+
+% VEGF and Antibody in tumor
+subplot(2,2,4)
+hold on;
+for i = 1:N
+    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFAb_t),'linewidth',2)
+
+end
+
+title( 'Concentration of VEGF-antibody Complex in Tumor')
+ylabel('[Ab-V] (pM)')
+xlabel('time (days)')
+
+xlim([0,25])
+hold off
+
+
+
+
+
+
+
+
+
+
+
+
+%%% TISSUE %%%
+
+
+
+figure;
+% VEGF in Tissue
+
+subplot(2,2,1)
+hold on;
+
+for i = 1:N
+    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGF_r),'linewidth',2)
+end
+
+title( 'Concentration of VEGF in Tissue')
 ylabel('[VEGF] (pM)')
 xlabel('time (days)')
 
 xlim([0,25])
 hold off
+
+
+
+% VEGF-VEGFR2 in Tissue
+subplot(2,2,2)
+hold on;
+
+for i = 1:N
+    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFVEGFR2_r),'linewidth',2)
+
+end
+
+title( 'Concentration of VEGF-VEGFR2 in Tissue')
+ylabel('[VEGF-VEGFR2] (pM)')
+xlabel('time (days)')
+
+xlim([0,25])
+hold off
+
+
+
+
+
+%VEGRF2 in Tissue
+subplot(2,2,3)
+hold on;
+
+for i = 1:N
+    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFR2_r),'linewidth',2)
+
+end
+
+title( 'Concentration of VEGF2 in Tissue')
+ylabel('[[VEGFR2] (pM)')
+xlabel('time (days)')
+
+xlim([0,25])
+hold off
+
+
+
+
+
+
+% VEGF and Antibody in Tissue
+subplot(2,2,4)
+hold on;
+for i = 1:N
+    plot(T_all{i}/(60*24),Y_all{i}(:,n.VEGFAb_r),'linewidth',2)
+
+end
+
+title( 'Concentration of VEGF-antibody Complex in Tissue')
+ylabel('[Ab-V] (pM)')
+xlabel('time (days)')
+
+xlim([0,25])
+hold off
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 myFlag=1;   % Program finished

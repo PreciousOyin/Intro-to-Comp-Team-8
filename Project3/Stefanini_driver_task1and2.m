@@ -89,27 +89,27 @@ Yout = [Y1;Y2];
 % figure('visible',on); % only show figures if flag is 'on'
 f1 = figure('Name','Fig 1A');
 
-one_a = subplot(3,1,1)
-plot(one_a, Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
-title(one_a, 'Reproduction of Figure 1A')
-ylabel(one_a, '[VEGF] (pM)')
-xlabel(one_a, 'time (days)')
+plot( Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title( 'Reproduction of Figure 1A')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
 
 legend
 
-s_one_a = subplot(3,1,2)
-plot(s_one_a, Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3,'DisplayName', 'Tumor')
+plot( Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3,'DisplayName', 'Tumor')
 % title('Concentration of free VEGF in Tumor')
-ylabel(s_one_a, '[VEGF] (pM)')
-xlabel(s_one_a, 'time (days)')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
 legend
 
-s_two_a = subplot(3,1,3)
-plot(s_two_a, Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
+plot( Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
 % title('Concentration of free VEGF in Rest of Body')
-ylabel(s_two_a, '[VEGF] (pM)')
-xlabel(s_two_a, 'time (days)')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
 legend
+xlim([0 25])
+hold off
 
 f2 = figure('Name','Figure S1A');
 
@@ -259,7 +259,7 @@ p.AbEx = 0; % set to 0 for no antibody transport; set to 1 for regular transport
 
 y0ss(n.Ab_b)=y0ss(n.Ab_b); % add antibody dose
 
-daily_dose = dose/(10*p.Vol_b)
+daily_dose = dose/(10*p.Vol_b);
 
 t_curr = 0;
 y_curr = y0ss;
@@ -267,7 +267,7 @@ T_all = [];
 Y_all = [];
 
 for i= 1:10
-dose_time = i*60*24
+dose_time = i*60*24;
 tspan = t_curr:1:dose_time;
 
 [t_day_dose, y_day_dose] = ode15s(@VEGFAbeqns, tspan, y_curr, options, p, n);
@@ -300,24 +300,22 @@ Yout = [Yout_temp;Y2];
 
 f7 = figure('Name','Figure 1C');
 
-one_c = subplot(3,1,1);
-plot(one_c, Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
-title(one_c, 'Reproduction of Figure 1C')
-ylabel(one_c, '[VEGF] (pM)')
-xlabel(one_c, 'time (days)')
+plot( Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title( 'Reproduction of Figure 1C')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
 
-two_c = subplot(3,1,2)
-plot(two_c, Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3, 'DisplayName', 'Tumor')
+plot( Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3, 'DisplayName', 'Tumor')
 % title('Concentration of free VEGF in Tumor')
-ylabel(two_c, '[VEGF] (pM)')
-xlabel(two_c, 'time (days)')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
 
-three_c = subplot(3,1,3)
 
-plot(three_c, Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
+plot( Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
 % title('Concentration of free VEGF in Rest of Body')
-ylabel(three_c, '[VEGF] (pM)')
-xlabel(three_c, 'time (days)')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
 % xlim([0 25])
 legend
 hold off
@@ -397,7 +395,7 @@ p.AbEx = 1; % set to 0 for no antibody transport; set to 1 for regular transport
 
 y0ss(n.Ab_b)=y0ss(n.Ab_b); % add antibody dose
 
-daily_dose = dose/(10*p.Vol_b)
+daily_dose = dose/(10*p.Vol_b);
 
 t_curr = 0;
 y_curr = y0ss;
@@ -405,7 +403,7 @@ T_all = [];
 Y_all = [];
 
 for i= 1:10
-dose_time = i*60*24
+dose_time = i*60*24;
 tspan = t_curr:1:dose_time;
 
 [t_day_dose, y_day_dose] = ode15s(@VEGFAbeqns, tspan, y_curr, options, p, n);
