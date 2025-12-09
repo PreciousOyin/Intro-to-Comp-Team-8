@@ -265,7 +265,55 @@ hold off
 
 
 
+% Calculating AUC for tumor and normal tissue
+AUC_t.VEGF    = zeros(N,1);
+AUC_t.VEGFVR  = zeros(N,1);
+AUC_t.VEGFR2  = zeros(N,1);
+AUC_t.VEGFAb  = zeros(N,1);
 
+AUC_r.VEGF    = zeros(N,1);
+AUC_r.VEGFVR  = zeros(N,1);
+AUC_r.VEGFR2  = zeros(N,1);
+AUC_r.VEGFAb  = zeros(N,1);
+
+for i = 1:N
+    t_min = T_all{i}; % in minutes
+    % Tumor concentrations 
+    C_t_VEGF   = Y_all{i}(:, n.VEGF_t);
+    C_t_VEGFVR = Y_all{i}(:, n.VEGFVEGFR2_t); 
+    C_t_VEGFR2 = Y_all{i}(:, n.VEGFR2_t);
+    C_t_VEGFAb = Y_all{i}(:, n.VEGFAb_t); 
+
+    % Normal tissue concentrations
+    C_r_VEGF   = Y_all{i}(:, n.VEGF_r);
+    C_r_VEGFVR = Y_all{i}(:, n.VEGFVEGFR2_r); 
+    C_r_VEGFR2 = Y_all{i}(:, n.VEGFR2_r);
+    C_r_VEGFAb = Y_all{i}(:, n.VEGFAb_r);
+
+    % Compute AUCs
+    AUC_t.VEGF(i)   = trapz(t_min, C_t_VEGF);
+    AUC_t.VEGFVR(i) = trapz(t_min, C_t_VEGFVR); 
+    AUC_t.VEGFR2(i) = trapz(t_min, C_t_VEGFR2); 
+    AUC_t.VEGFAb(i) = trapz(t_min, C_t_VEGFAb); 
+
+    AUC_r.VEGF(i)   = trapz(t_min, C_r_VEGF); % in pM/min
+    AUC_r.VEGFVR(i) = trapz(t_min, C_r_VEGFVR); % in pM/min
+    AUC_r.VEGFR2(i) = trapz(t_min, C_r_VEGFR2); % in nM/min
+    AUC_r.VEGFAb(i) = trapz(t_min, C_r_VEGFAb); % in nM/min
+end
+
+% Group summary: mean and std (pM·min)
+fields = fieldnames(AUC_t);
+fprintf('\n Average AUC across %d patients \n', N);
+for f = 1:numel(fields)
+    fn = fields{f};
+    mean_t = mean(AUC_t.(fn));
+    std_t  = std(AUC_t.(fn));
+    mean_r = mean(AUC_r.(fn));
+    std_r  = std(AUC_r.(fn));
+    fprintf('%-12s  Tumor: mean = %.3e  ± %.3e   |   Normal: mean = %.3e  ± %.3e\n', ...
+        fn, mean_t, std_t, mean_r, std_r);
+end
 
 
 
