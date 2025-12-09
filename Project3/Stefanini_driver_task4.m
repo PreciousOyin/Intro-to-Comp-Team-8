@@ -1,4 +1,4 @@
-function myFlag = ICMP_Team8_Proj3_Task3()
+function myFlag = ICMP_Team8_Proj3_Task4()
 
 clear all;
 close all;
@@ -149,7 +149,7 @@ for i = 1:N
 end
 
 title( 'Concentration of VEGF2 in Tumor')
-ylabel('[[VEGFR2] (pM)')
+ylabel('[VEGFR2] (pM)')
 xlabel('time (days)')
 
 xlim([0,25])
@@ -237,7 +237,7 @@ for i = 1:N
 end
 
 title( 'Concentration of VEGF2 in Tissue')
-ylabel('[[VEGFR2] (pM)')
+ylabel('[VEGFR2] (pM)')
 xlabel('time (days)')
 
 xlim([0,25])
@@ -314,25 +314,6 @@ for f = 1:numel(fields)
     fprintf('%-12s  Tumor: mean = %.3e  ± %.3e   |   Normal: mean = %.3e  ± %.3e\n', ...
         fn, mean_t, std_t, mean_r, std_r);
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 myFlag=1;   % Program finished

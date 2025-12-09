@@ -121,6 +121,8 @@ end
 
 
 
+% Tumor
+
 figure;
 % VEGF in Tumor
 
@@ -166,7 +168,7 @@ for i = 1:N
 end
 
 title( 'Concentration of VEGF2 in Tumor')
-ylabel('[[VEGFR2] (pM)')
+ylabel('[VEGFR2] (pM)')
 xlabel('time (days)')
 
 xlim([0,25])
@@ -254,7 +256,7 @@ for i = 1:N
 end
 
 title( 'Concentration of VEGF2 in Tissue')
-ylabel('[[VEGFR2] (pM)')
+ylabel('[VEGFR2] (pM)')
 xlabel('time (days)')
 
 xlim([0,25])

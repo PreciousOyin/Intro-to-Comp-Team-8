@@ -1,4 +1,4 @@
-function myFlag = ICMP_Team8_Proj3()
+function myFlag = ICMP_Team8_Proj3_task1and2()
 
 clear all;
 close all;
@@ -222,18 +222,177 @@ plot(Tout/(60*24),Yout(:,n.VEGFAb_b)*10^-3,'k--','linewidth',3,'DisplayName', 'B
 hold on
 title('Reproduction of Figure S2B')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 
 plot(Tout/(60*24),Yout(:,n.VEGFAb_t)*10^-3,'k:','linewidth',3,'DisplayName', 'Tumor')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 
 plot(Tout/(60*24),Yout(:,n.VEGFAb_r)*10^-3,'k','linewidth',3, 'DisplayName', 'Tissue')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 xlim([0 25])
 legend
 hold off
+
+
+
+
+
+
+
+
+
+%% combine graph
+
+f13 = figure('Name','Task 1 Panel');
+
+subplot(2,3,1)
+plot( Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title( 'Reproduction of Figure 1A')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
+
+legend('Location', 'east')
+
+plot( Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3,'DisplayName', 'Tumor')
+% title('Concentration of free VEGF in Tumor')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
+legend('Location', 'east')
+
+
+plot( Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of free VEGF in Rest of Body')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
+legend('Location', 'east')
+xlim([0 25])
+hold off
+
+
+
+subplot(2,3,2)
+
+plot(Tout/(60*24),Yout(:,n.Ab_b)*10^-6,'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S1A')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.Ab_t)*10^-6,'k:','linewidth',3, 'DisplayName', 'Tumor')
+% title('Concentration of antibody in Tumor')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.Ab_r)*10^-6,'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of antibody in Rest of Body')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+subplot(2,3,3)
+plot(Tout/(60*24),Yout(:,n.VEGFAb_b)*10^-3,'k--','linewidth',3,'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S2A')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_t)*10^-3,'k:','linewidth',3, 'DisplayName', 'Tumor')
+% title('Concentration of VEGF-antibody complex in Tumor')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_r)*10^-3,'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of VEGF-antibody complex in Rest of Body')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+
+p.AbEx = 1; % set to 0 for no antibody transport; set to 1 for regular transport
+
+y0 = zeros(15,1);
+sstime = 60*24*10;
+options = odeset('MaxStep', 5e-1, 'AbsTol', 1e-5,'RelTol', 1e-5,'InitialStep', 1e-2);
+[T1,Y1] = ode15s(@VEGFAbeqns,[0:1:sstime],y0,options,p,n);
+y0ss = Y1(end,:)';
+
+
+y0ss(n.Ab_b)=y0ss(n.Ab_b)+dose/p.Vol_b; % add antibody dose
+endtime = 60*24*21; 
+
+[T2,Y2] = ode15s(@VEGFAbeqns,[sstime:1:(sstime+endtime)],y0ss,options,p,n);
+Tout = [T1;T2]-sstime; % normalize to antibody addition at time zero
+Yout = [Y1;Y2];
+
+
+subplot(2,3,4)
+plot(Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure 1B')
+ylabel('[VEGF] (pM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3, 'DisplayName', 'Tumor')
+% title('Concentration of free VEGF in Tumor')
+ylabel('[VEGF] (pM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of free VEGF in Rest of Body')
+ylabel('[VEGF] (pM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+subplot(2,3,5)
+plot(Tout/(60*24),Yout(:,n.Ab_b)*10^-6,'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S1B')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+
+plot(Tout/(60*24),Yout(:,n.Ab_t)*10^-6,'k:','linewidth',3,'DisplayName', 'Tumor')
+% title('Concentration of antibody in Tumor')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+
+
+plot(Tout/(60*24),Yout(:,n.Ab_r)*10^-6,'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of antibody in Rest of Body')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+subplot(2,3,6)
+plot(Tout/(60*24),Yout(:,n.VEGFAb_b)*10^-3,'k--','linewidth',3,'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S2B')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_t)*10^-3,'k:','linewidth',3,'DisplayName', 'Tumor')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_r)*10^-3,'k','linewidth',3, 'DisplayName', 'Tissue')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
 
 
 
@@ -347,26 +506,18 @@ plot(Tout/(60*24),Yout(:,n.VEGFAb_b)*10^-3,'k--','linewidth',3,'DisplayName', 'B
 hold on
 title('Reproduction of Figure S2C')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 
 plot(Tout/(60*24),Yout(:,n.VEGFAb_t)*10^-3,'k:','linewidth',3,'DisplayName', 'Tumor')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 
 plot(Tout/(60*24),Yout(:,n.VEGFAb_r)*10^-3,'k','linewidth',3, 'DisplayName', 'Tissue')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 xlim([0 25])
 legend
 hold off
-
-
-
-
-
-
-
-
 
 
 
@@ -486,19 +637,245 @@ plot(Tout/(60*24),Yout(:,n.VEGFAb_b)*10^-3,'k--','linewidth',3,'DisplayName', 'B
 hold on
 title('Reproduction of Figure S2D')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 
 plot(Tout/(60*24),Yout(:,n.VEGFAb_t)*10^-3,'k:','linewidth',3,'DisplayName', 'Tumor')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 
 plot(Tout/(60*24),Yout(:,n.VEGFAb_r)*10^-3,'k','linewidth',3, 'DisplayName', 'Tissue')
 ylabel('[Ab-V] (nM)')
-xlabel('time (mins)')
+xlabel('time (days)')
 xlim([0 25])
 legend
 hold off
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% task 2 panel
+f14 = figure('Name','Task 2 Panel');
+
+subplot(2,3,1)
+plot( Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title( 'Reproduction of Figure 1C')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
+
+plot( Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3, 'DisplayName', 'Tumor')
+% title('Concentration of free VEGF in Tumor')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
+
+
+plot( Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of free VEGF in Rest of Body')
+ylabel( '[VEGF] (pM)')
+xlabel( 'time (days)')
+% xlim([0 25])
+legend('Location', 'east')
+hold off
+
+subplot(2,3,2)
+plot(Tout/(60*24),Yout(:,n.Ab_b)*10^-6,'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S1C')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.Ab_t)*10^-6,'k:','linewidth',3,'DisplayName', 'Tumor')
+% title('Concentration of antibody in Tumor')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.Ab_r)*10^-6,'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of antibody in Rest of Body')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+subplot(2,3,3)
+plot(Tout/(60*24),Yout(:,n.VEGFAb_b)*10^-3,'k--','linewidth',3,'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S2C')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_t)*10^-3,'k:','linewidth',3,'DisplayName', 'Tumor')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_r)*10^-3,'k','linewidth',3, 'DisplayName', 'Tissue')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+
+
+
+
+
+
+
+
+% with extravation
+
+dose = 10*70/150000000*1e12; % 10mg/kg * person size = 70 kg => 700 mg; MW = 150 kDa = 150,000,000 mg/mol
+
+% simulations - 1 - run to steady state, no antibody (observe levels of
+% VEGF in each tissue)
+
+% initial conditions 
+y0 = zeros(15,1);
+sstime = 60*24*10;
+options = odeset('MaxStep',5e-1, 'AbsTol', 1e-5,'RelTol', 1e-5,'InitialStep', 1e-2);
+[T1,Y1] = ode15s(@VEGFAbeqns,[0:1:sstime],y0,options,p,n);
+y0ss = Y1(end,:)';
+
+
+p.AbEx = 1; % set to 0 for no antibody transport; set to 1 for regular transport
+
+y0ss(n.Ab_b)=y0ss(n.Ab_b); % add antibody dose
+
+daily_dose = dose/(10*p.Vol_b);
+
+t_curr = 0;
+y_curr = y0ss;
+T_all = [];
+Y_all = [];
+
+for i= 1:10
+dose_time = i*60*24;
+tspan = t_curr:1:dose_time;
+
+[t_day_dose, y_day_dose] = ode15s(@VEGFAbeqns, tspan, y_curr, options, p, n);
+
+y_curr = y_day_dose(end, :)';
+y_curr(n.Ab_b) = y_curr(n.Ab_b) + daily_dose;
+
+
+t_curr = t_curr + 60*24;
+
+T_all = [T_all; t_day_dose];
+Y_all = [Y_all; y_day_dose];
+
+
+T_all = [T_all; t_day_dose(end) + 1e-6];
+Y_all = [Y_all; y_curr'];
+end
+
+
+endtime = 60*24*21; 
+Tout_temp = [T_all]; % normalize to antibody addition at time zero
+Yout_temp = [Y_all];
+
+
+[T2,Y2] = ode15s(@VEGFAbeqns,[t_curr:1:(t_curr+endtime)],y_curr,options,p,n);
+
+Tout = [Tout_temp;T2]; % normalize to antibody addition at time zero
+Yout = [Yout_temp;Y2];
+
+
+
+subplot(2,3,4)
+plot(Tout/(60*24),Yout(:,n.VEGF_b),'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure 1D')
+ylabel('[VEGF] (pM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGF_t),'k:','linewidth',3, 'DisplayName', 'Tumor')
+% title('Concentration of free VEGF in Tumor')
+ylabel('[VEGF] (pM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGF_r),'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of free VEGF in Rest of Body')
+ylabel('[VEGF] (pM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+subplot(2,3,5)
+
+plot(Tout/(60*24),Yout(:,n.Ab_b)*10^-6,'k--','linewidth',3, 'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S1D')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+
+plot(Tout/(60*24),Yout(:,n.Ab_t)*10^-6,'k:','linewidth',3,'DisplayName', 'Tumor')
+% title('Concentration of antibody in Tumor')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+
+
+
+plot(Tout/(60*24),Yout(:,n.Ab_r)*10^-6,'k','linewidth',3, 'DisplayName', 'Tissue')
+% title('Concentration of antibody in Rest of Body')
+ylabel('[Ab] (uM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
+
+subplot(2,3,6)
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_b)*10^-3,'k--','linewidth',3,'DisplayName', 'Blood')
+hold on
+title('Reproduction of Figure S2D')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_t)*10^-3,'k:','linewidth',3,'DisplayName', 'Tumor')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+
+plot(Tout/(60*24),Yout(:,n.VEGFAb_r)*10^-3,'k','linewidth',3, 'DisplayName', 'Tissue')
+ylabel('[Ab-V] (nM)')
+xlabel('time (days)')
+xlim([0 25])
+legend('Location', 'east')
+hold off
 
 
 
